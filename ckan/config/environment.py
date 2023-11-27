@@ -84,6 +84,7 @@ def load_environment(conf: Union[Config, CKANConfig]):
 # Start CONFIG_FROM_ENV_VARS
 CONFIG_FROM_ENV_VARS: dict[str, str] = {
     'sqlalchemy.url': 'CKAN_SQLALCHEMY_URL',
+    'SECRET_KEY': 'CKAN_SECRET_KEY',
     'ckan.datastore.write_url': 'CKAN_DATASTORE_WRITE_URL',
     'ckan.datastore.read_url': 'CKAN_DATASTORE_READ_URL',
     'ckan.redis.url': 'CKAN_REDIS_URL',
