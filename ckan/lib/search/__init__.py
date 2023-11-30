@@ -310,22 +310,8 @@ def clear_all() -> None:
     package_index.clear()
 
 def _get_schema_from_solr(file_offset: str):
-
-    timeout = config.get('ckan.requests.timeout')
-
-    solr_url, solr_user, solr_password = SolrSettings.get()
-
-    url = solr_url.strip('/') + file_offset
-
-    timeout = config.get('ckan.requests.timeout')
-    if solr_user is not None and solr_password is not None:
-        response = requests.get(
-            url,
-            timeout=timeout,
-            auth=HTTPBasicAuth(solr_user, solr_password))
-    else:
-        response = requests.get(url, timeout=timeout)
-
+    solr = make_connection()
+    response = solr._send_request('GET', file_offset)
     return response
 
 def check_solr_schema_version(schema_file: Optional[str]=None) -> bool:
@@ -363,12 +349,10 @@ def check_solr_schema_version(schema_file: Optional[str]=None) -> bool:
     if not schema_file:
         try:
             # Try Managed Schema
-            res = _get_schema_from_solr(SOLR_SCHEMA_FILE_OFFSET_MANAGED)
-            res.raise_for_status()
+            schema_content = _get_schema_from_solr(SOLR_SCHEMA_FILE_OFFSET_MANAGED)
         except requests.HTTPError:
             # Fallback to Manually Edited schema.xml
-            res = _get_schema_from_solr(SOLR_SCHEMA_FILE_OFFSET_CLASSIC)
-        schema_content = res.text
+            schema_content = _get_schema_from_solr(SOLR_SCHEMA_FILE_OFFSET_CLASSIC)
     else:
         with open(schema_file, 'rb') as f:
             schema_content = f.read()
