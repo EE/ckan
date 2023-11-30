@@ -36,8 +36,14 @@ def connect_to_redis() -> Redis:  # type: ignore
     global _connection_pool
     if _connection_pool is None:
         url = config.get('ckan.redis.url')
-        log.debug(u'Using Redis at {}'.format(url))
-        _connection_pool = ConnectionPool.from_url(url)
+        redis_kwargs = {}
+        ssl_cert_reqs = config.get('ckan.redis.ssl_cert_reqs')
+        if ssl_cert_reqs is not None:
+            redis_kwargs['ssl_cert_reqs'] = ssl_cert_reqs
+        log.debug(
+            u'Using Redis at {}, with options {}'.format(url, redis_kwargs)
+        )
+        _connection_pool = ConnectionPool.from_url(url, **redis_kwargs)
     return Redis(connection_pool=_connection_pool)
 
 

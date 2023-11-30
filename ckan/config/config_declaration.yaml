@@ -963,6 +963,10 @@ groups:
         validators: not_empty
         example: redis://localhost:7000/1
         description: URL to your Redis instance, including the database to be used.
+      - key: ckan.redis.ssl_cert_reqs
+        type: bool
+        default: null
+        description: If specified (not null) will be passed to redis client as ssl_cert_reqs parameter.
 
   - annotation: CORS Settings
     options:
