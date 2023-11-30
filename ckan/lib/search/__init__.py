@@ -310,6 +310,9 @@ def clear_all() -> None:
     package_index.clear()
 
 def _get_schema_from_solr(file_offset: str):
+    solr = make_connection()
+    response = solr._send_request('GET', file_offset)
+    return response
 
     timeout = config.get('ckan.requests.timeout')
 
@@ -363,12 +366,10 @@ def check_solr_schema_version(schema_file: Optional[str]=None) -> bool:
     if not schema_file:
         try:
             # Try Managed Schema
-            res = _get_schema_from_solr(SOLR_SCHEMA_FILE_OFFSET_MANAGED)
-            res.raise_for_status()
+            schema_content = _get_schema_from_solr(SOLR_SCHEMA_FILE_OFFSET_MANAGED)
         except requests.HTTPError:
             # Fallback to Manually Edited schema.xml
-            res = _get_schema_from_solr(SOLR_SCHEMA_FILE_OFFSET_CLASSIC)
-        schema_content = res.text
+            schema_content = _get_schema_from_solr(SOLR_SCHEMA_FILE_OFFSET_CLASSIC)
     else:
         with open(schema_file, 'rb') as f:
             schema_content = f.read()
