@@ -90,6 +90,7 @@ CONFIG_FROM_ENV_VARS: dict[str, str] = {
     'solr_url': 'CKAN_SOLR_URL',
     'solr_user': 'CKAN_SOLR_USER',
     'solr_password': 'CKAN_SOLR_PASSWORD',
+    'solr_auth_header': 'CKAN_SOLR_AUTH_HEADER',
     'ckan.site_id': 'CKAN_SITE_ID',
     'ckan.site_url': 'CKAN_SITE_URL',
     'ckan.storage_path': 'CKAN_STORAGE_PATH',

@@ -838,6 +838,12 @@ groups:
         description: User to use in HTTP Basic Authentication when connecting to Solr
       - key: solr_password
         description: Password to use in HTTP Basic Authentication when connecting to Solr
+      - key: solr_auth_header
+        description: |
+          Value to be used in the Authorization header when connecting to Solr
+
+          For example you can set `solr_auth_header` to `Token asdf`.
+          It will result with requests sent with `Authorization: Token asdf` header.
 
       - key: ckan.search.remove_deleted_packages
         type: bool

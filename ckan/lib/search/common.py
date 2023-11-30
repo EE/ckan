@@ -7,6 +7,7 @@ import re
 from typing import Any, Optional
 
 import pysolr
+import requests
 import simplejson
 
 from six.moves.urllib.parse import quote_plus  # type: ignore
@@ -87,13 +88,18 @@ def make_connection(decode_dates: bool = True) -> Solr:
                                        quote_plus(solr_password),
                                        solr_url)
 
-    timeout = config.get('solr_timeout')
+    solr_kwargs = {}
+    solr_kwargs['timeout'] = config.get('solr_timeout')
 
     if decode_dates:
         decoder = simplejson.JSONDecoder(object_hook=solr_datetime_decoder)
-        return pysolr.Solr(solr_url, decoder=decoder, timeout=timeout)
-    else:
-        return pysolr.Solr(solr_url, timeout=timeout)
+        solr_kwargs['decoder'] = decoder
+
+    solr_auth_header = config.get('solr_auth_header')
+    if solr_auth_header:
+        solr_kwargs['auth'] = HeaderAuth(solr_auth_header)
+
+    return pysolr.Solr(solr_url, **solr_kwargs)
 
 
 def solr_datetime_decoder(d: dict[str, Any]) -> dict[str, Any]:
@@ -112,3 +118,12 @@ def solr_datetime_decoder(d: dict[str, Any]) -> dict[str, Any]:
                                          date_values['minute'],
                                          date_values['second'])
     return d
+
+
+class HeaderAuth(requests.auth.AuthBase):
+    def __init__(self, header: str):
+        self.header = header
+
+    def __call__(self, r: requests.Request) -> requests.Request:
+        r.headers['Authorization'] = self.header
+        return r
