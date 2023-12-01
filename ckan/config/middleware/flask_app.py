@@ -684,6 +684,7 @@ def _setup_webassets(app: CKANApp):
     app.use_x_sendfile = config.get('ckan.webassets.use_x_sendfile')
 
     webassets_folder = get_webassets_path()
+    webassets_folder = os.path.abspath(webassets_folder)
 
     def webassets(path: str):
         return send_from_directory(webassets_folder, path)
